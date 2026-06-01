@@ -3,6 +3,8 @@ import random
 import sys
 import pygame
 # honestly when i wrote the code , only god and i knew what it works , now only god knows , if you do understand the code you have my respect hahahah
+## DISCLAIMER , a couple of comments has been added by Ai as my code didnt have much comments and i told the Ai to explain the code , also remove dead commented code
+
 W, H = 900, 700
 pygame.init()
 screen = pygame.display.set_mode((W, H))
