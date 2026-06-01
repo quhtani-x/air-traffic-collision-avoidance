@@ -2,13 +2,7 @@ import math
 import random
 import sys
 import pygame
-
-# AIR TRAFFIC COLLISION AVOIDANCE (like a simplified TCAS).
-# planes fly across the sky on different headings. the system constantly checks
-# every pair of planes - if two are predicted to get too close, it flags a
-# conflict and nudges them apart (one climbs/turns) to avoid a collision.
-# shown on a radar-style display. red lines = active conflict being resolved.
-
+# honestly when i wrote the code , only god and i knew what it works , now only god knows , if you do understand the code you have my respect hahahah
 W, H = 900, 700
 pygame.init()
 screen = pygame.display.set_mode((W, H))
@@ -23,7 +17,7 @@ LOOKAHEAD = 40        # frames ahead we predict positions
 class Plane:
     _id = 0
     def __init__(self):
-        # spawn on a random edge heading roughly across the screen
+        
         edge = random.choice("LRTB")
         if edge == "L": self.x, self.y, ang = 0, random.uniform(0, H), 0
         elif edge == "R": self.x, self.y, ang = W, random.uniform(0, H), math.pi
@@ -57,23 +51,20 @@ while running:
     for p in planes:
         p.conflict = False
 
-    # ---- conflict detection + resolution ----
+    
     for i in range(len(planes)):
         for j in range(i + 1, len(planes)):
             a, b = planes[i], planes[j]
-            # predict the closest they'll get in the next LOOKAHEAD frames
+            
             closest = min(dist(a.future(t), b.future(t)) for t in range(LOOKAHEAD))
             if closest < SAFE_DIST:
                 a.conflict = b.conflict = True
-                # steer them apart: rotate their velocities slightly opposite ways
                 ax, ay = a.x - b.x, a.y - b.y
                 d = math.hypot(ax, ay) or 1
-                # push a away from b and b away from a (avoidance vector)
                 a.vx += ax / d * 0.06
                 a.vy += ay / d * 0.06
                 b.vx -= ax / d * 0.06
-                b.vy -= ay / d * 0.06
-                # renormalize speed so they keep cruising
+                b.vy -= ay / d * 0.
                 for pl in (a, b):
                     s = math.hypot(pl.vx, pl.vy)
                     pl.vx, pl.vy = pl.vx / s * 2.2, pl.vy / s * 2.2
@@ -85,14 +76,13 @@ while running:
         if p.x < -20 or p.x > W + 20 or p.y < -20 or p.y > H + 20:
             planes[k] = Plane()
 
-    # ---- radar display ----
+    # obviously we need a radar display lol
     screen.fill((6, 18, 12))
     for r in range(80, max(W, H), 80):
         pygame.draw.circle(screen, (16, 46, 30), (W // 2, H // 2), r, 1)
     pygame.draw.line(screen, (16, 46, 30), (W // 2, 0), (W // 2, H))
     pygame.draw.line(screen, (16, 46, 30), (0, H // 2), (W, H // 2))
 
-    # draw conflict links
     for i in range(len(planes)):
         for j in range(i + 1, len(planes)):
             a, b = planes[i], planes[j]
